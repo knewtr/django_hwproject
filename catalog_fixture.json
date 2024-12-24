@@ -1,0 +1,78 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "ЭДО",
+        "description": "Электронный документооборот под различные задачи бизнеса"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "Автоматизация",
+        "description": "Система для автоматизаций учета в малом и среднем бизнесе"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "name": "Проверка",
+        "description": "Получение достоверной информации о партнерах и связанных с ними компаниях"
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+        "name": "Фокус",
+        "description": "Проверяйте российские и зарубежные компании, ИП и физлиц.",
+        "photo": "",
+        "category": 2,
+        "price": 200000.0,
+        "created_at": "2024-12-24",
+        "updated_at": null
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 4,
+    "fields": {
+        "name": "Компас",
+        "description": "Подбор организаций, которым подходит ваш товар или услуга.",
+        "photo": "",
+        "category": 1,
+        "price": 100000.0,
+        "created_at": "2024-12-23",
+        "updated_at": null
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 6,
+    "fields": {
+        "name": "Диадок",
+        "description": "Обмен накладными, счетами-фактурами, актами и другими документами без дублирования на бумаге",
+        "photo": "",
+        "category": 3,
+        "price": 400000.0,
+        "created_at": "2024-12-23",
+        "updated_at": null
+    }
+},
+{
+    "model": "catalog.product",
+    "pk": 7,
+    "fields": {
+        "name": "Сайн",
+        "description": "Документооборот с самозанятыми, внештатными сотрудниками, клиентами и прочими физлицами.",
+        "photo": "",
+        "category": 3,
+        "price": 120000.0,
+        "created_at": "2024-12-23",
+        "updated_at": null
+    }
+}
+]
