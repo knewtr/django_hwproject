@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404, redirect, render
 
-from catalog.models import Category, Product
+from catalog.models import Product
 
 
 def home(request):
