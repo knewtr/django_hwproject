@@ -1,32 +1,22 @@
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import render
+from django.views.generic import DetailView, ListView, View
 
-from catalog.models import Product
-
-
-def home(request):
-    return render(request, "home.html")
+from catalog.models import Contact, Product
 
 
-def contacts(request):
-    if request.method == "POST":
-        name = request.POST.get("name")
-        phone = request.POST.get("phone")
-        message = request.POST.get("message")
-        return redirect("test_form")
-    return render(request, "contacts.html")
+class ContactsView(View):
+    model = Contact
+
+    def get(self, request):
+        return render(request, "catalog/contacts.html")
+
+    # def post(self, request, *args, **kwargs):
+    #     return render(request, "catalog/contacts/test_form.html")
 
 
-def test_form(request):
-    return render(request, "test_form.html")
+class ProductListView(ListView):
+    model = Product
 
 
-def products_list(request):
-    products = Product.objects.all()
-    context = {"products": products}
-    return render(request, "products_list.html", context=context)
-
-
-def products_detail(request, pk):
-    product = get_object_or_404(Product, pk=pk)
-    context = {"product": product}
-    return render(request, "products_detail.html", context=context)
+class ProductDetailView(DetailView):
+    model = Product
