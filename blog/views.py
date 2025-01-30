@@ -1,8 +1,43 @@
 from django.urls import reverse_lazy
-from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
-                                  UpdateView)
+from django.views.generic import (
+    CreateView,
+    DeleteView,
+    DetailView,
+    ListView,
+    UpdateView,
+)
 
 from blog.models import Article
+from catalog.forms import ProductForm
+from catalog.models import Product
+
+
+class ProductCreateView(CreateView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy("catalog:product_list")
+
+
+class ProductListView(ListView):
+    model = Product
+
+
+class ProductDetailView(DetailView):
+    model = Product
+
+
+class ProductUpdateView(UpdateView):
+    model = Product
+    form_class = ProductForm
+
+    def get_success_url(self):
+        return reverse_lazy("catalog:product_detail", kwargs={"pk": self.object.pk})
+
+
+class ProductDeleteView(DeleteView):
+    model = Product
+    form_class = ProductForm
+    success_url = reverse_lazy("catalog:product_list")
 
 
 class ArticleListView(ListView):
@@ -12,6 +47,7 @@ class ArticleListView(ListView):
         queryset = super().get_queryset().filter(is_published=True)
         return queryset
 
+
 class ArticleDetailView(DetailView):
     model = Article
 
@@ -20,6 +56,7 @@ class ArticleDetailView(DetailView):
         object.view_count += 1
         object.save()
         return object
+
 
 class ArticleCreateView(CreateView):
     model = Article
@@ -32,7 +69,7 @@ class ArticleUpdateView(UpdateView):
     fields = ("title", "content", "preview", "is_published")
 
     def get_success_url(self):
-        return reverse_lazy("blog:article_detail", kwargs={'pk':self.object.pk})
+        return reverse_lazy("blog:article_detail", kwargs={"pk": self.object.pk})
 
 
 class ArticleDeleteView(DeleteView):
