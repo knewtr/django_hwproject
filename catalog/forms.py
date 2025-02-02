@@ -62,12 +62,14 @@ class ProductForm(ProductFormMixin, ModelForm):
 
     def clean_photo(self):
         max_size = 5 * 1024 * 1024
-        photo = self.cleaned_data.get('photo')
-        extension = photo.name.split('.')[-1].lower()
+        photo = self.cleaned_data.get("photo")
+        extension = photo.name.split(".")[-1].lower()
         if extension not in ALLOWED_EXTENSIONS:
-            raise ValidationError('Неподходящий формат изображения')
+            raise ValidationError("Неподходящий формат изображения")
 
         if photo.size > max_size:
-            raise ValidationError('Максимальный размер изображения не должен быть больше 5Мб')
+            raise ValidationError(
+                "Максимальный размер изображения не должен быть больше 5Мб"
+            )
 
         return photo
