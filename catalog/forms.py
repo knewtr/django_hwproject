@@ -14,7 +14,7 @@ FORBIDDEN_WORDS = (
     "полиция",
     "радар",
 )
-ALLOWED_EXTENSIONS = [".jpg", ".jpeg", ".png"]
+ALLOWED_EXTENSIONS = ["jpg", "jpeg", "png"]
 
 
 class ProductFormMixin:
@@ -42,14 +42,16 @@ class ProductForm(ProductFormMixin, ModelForm):
 
     def clean_name(self):
         name = self.cleaned_data.get("name")
-        if name.lower() in FORBIDDEN_WORDS:
-            raise ValidationError("Имя продукта не может содержать это слово")
+        for word in FORBIDDEN_WORDS:
+            if word in name.lower():
+                raise ValidationError("Имя продукта не может содержать это слово")
         return name
 
     def clean_description(self):
         description = self.cleaned_data.get("description")
-        if description.lower() in FORBIDDEN_WORDS:
-            raise ValidationError("Описание продукта не может содержать это слово")
+        for word in FORBIDDEN_WORDS:
+            if word in description.lower():
+                raise ValidationError("Описание продукта не может содержать это слово")
         return description
 
     def clean_price(self):
@@ -58,13 +60,14 @@ class ProductForm(ProductFormMixin, ModelForm):
             raise ValidationError("Цена не может быть отрицательной")
         return price
 
-    # def clean_photo(self):
-    #     max_size = 3 * 1024 * 1024
-    #     photo = self.cleaned_data.get('photo')
-    #     extension = photo.name.split('.')[-1]
-    #     if extension not in ALLOWED_EXTENSIONS:
-    #         raise AttributeError('Неподходящий формат изображения')
-    #     elif photo > max_size:
-    #         raise AttributeError('Максимальный размер изображения не должен быть больше 3Мб')
-    #     else:
-    #         return photo
+    def clean_photo(self):
+        max_size = 5 * 1024 * 1024
+        photo = self.cleaned_data.get('photo')
+        extension = photo.name.split('.')[-1].lower()
+        if extension not in ALLOWED_EXTENSIONS:
+            raise ValidationError('Неподходящий формат изображения')
+
+        if photo.size > max_size:
+            raise ValidationError('Максимальный размер изображения не должен быть больше 5Мб')
+
+        return photo

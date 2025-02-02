@@ -22,7 +22,6 @@ class Product(models.Model):
         blank=True,
         null=True,
         verbose_name="Фото",
-        validators=[clean_photo],
     )
     category = models.ForeignKey(
         Category,
