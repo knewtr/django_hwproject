@@ -18,7 +18,10 @@ class Product(models.Model):
     name = models.CharField(max_length=150, verbose_name="Название продукта")
     description = models.TextField(verbose_name="Описание продукта")
     photo = models.ImageField(
-        upload_to="catalog/photo", blank=True, null=True, verbose_name="Фото"
+        upload_to="catalog/photo",
+        blank=True,
+        null=True,
+        verbose_name="Фото",
     )
     category = models.ForeignKey(
         Category,

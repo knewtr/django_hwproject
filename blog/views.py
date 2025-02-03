@@ -12,6 +12,7 @@ class ArticleListView(ListView):
         queryset = super().get_queryset().filter(is_published=True)
         return queryset
 
+
 class ArticleDetailView(DetailView):
     model = Article
 
@@ -20,6 +21,7 @@ class ArticleDetailView(DetailView):
         object.view_count += 1
         object.save()
         return object
+
 
 class ArticleCreateView(CreateView):
     model = Article
@@ -32,7 +34,7 @@ class ArticleUpdateView(UpdateView):
     fields = ("title", "content", "preview", "is_published")
 
     def get_success_url(self):
-        return reverse_lazy("blog:article_detail", kwargs={'pk':self.object.pk})
+        return reverse_lazy("blog:article_detail", kwargs={"pk": self.object.pk})
 
 
 class ArticleDeleteView(DeleteView):
