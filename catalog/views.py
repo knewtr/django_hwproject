@@ -1,12 +1,14 @@
+from itertools import product
+
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView, View)
 
 from django.contrib.auth.mixins import LoginRequiredMixin
-from catalog.forms import ProductForm
+from catalog.forms import ProductForm, ProductModerForm
 from catalog.models import Contact, Product
-
+from django.http import HttpResponseForbidden
 
 class ContactsView(View):
     model = Contact
@@ -23,6 +25,12 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     form_class = ProductForm
     success_url = reverse_lazy("catalog:product_list")
 
+    def form_valid(self, form):
+        product = form.save()
+        user = self.request.user
+        product.owner = user
+        product.save()
+        return super().form_valid(form)
 
 class ProductListView(ListView):
     model = Product
@@ -39,7 +47,23 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         return reverse_lazy("catalog:product_detail", kwargs={"pk": self.object.pk})
 
+    def get_form_class(self):
+        user = self.request.user
+        if user.object.owner:
+            return ProductForm
+        if user.has_perms('products.can_unpublish_product'):
+            return ProductModerForm
+        return HttpResponseForbidden('У вас нет прав снимать публикацию продукта')
+
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("catalog:product_list")
+
+    def get_form_class(self):
+        user = self.request.user
+        if user.object.owner:
+            return ProductForm
+        if user.has_perms('products.can_delete_product'):
+            return ProductModerForm
+        return HttpResponseForbidden('У вас нет прав удалять продукт')

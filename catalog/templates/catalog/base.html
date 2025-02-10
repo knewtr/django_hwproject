@@ -138,6 +138,11 @@
       <div class="col-lg-6 col-md-8 mx-auto">
         <h1 class="fw-light">Skystore</h1>
         <p class="lead text-body-secondary">Skystore - это онлайн-магазин с отличным выбором экосистемы продуктов для любого бизнеса</p>
+        {% if user.is_authenticated %}
+        <p>
+          <a class="btn btn-primary" href="{% url 'catalog:product_create' %}" role="button">Добавить продукт</a>
+        </p>
+        {% endif %}
       </div>
     </div>
   </section>
