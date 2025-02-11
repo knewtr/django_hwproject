@@ -8,7 +8,7 @@ from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
 from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.forms import ProductForm, ProductModerForm
 from catalog.models import Contact, Product
-from django.http import HttpResponseForbidden
+from django.core.exceptions import PermissionDenied
 
 class ContactsView(View):
     model = Contact
@@ -49,11 +49,11 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
 
     def get_form_class(self):
         user = self.request.user
-        if user.object.owner:
+        if self.object.owner == user:
             return ProductForm
-        if user.has_perms('products.can_unpublish_product'):
+        if user.has_perms(['products.can_unpublish_product']):
             return ProductModerForm
-        return HttpResponseForbidden('У вас нет прав снимать публикацию продукта')
+        raise PermissionDenied
 
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
@@ -62,8 +62,8 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
 
     def get_form_class(self):
         user = self.request.user
-        if user.object.owner:
+        if self.object.owner == user:
             return ProductForm
-        if user.has_perms('products.can_delete_product'):
+        if user.has_perms(['products.can_delete_product']):
             return ProductModerForm
-        return HttpResponseForbidden('У вас нет прав удалять продукт')
+        raise PermissionDenied
