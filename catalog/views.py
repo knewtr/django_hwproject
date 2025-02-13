@@ -1,14 +1,15 @@
-from itertools import product
 
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
 from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView, View)
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.forms import ProductForm, ProductModerForm
 from catalog.models import Contact, Product
-from django.core.exceptions import PermissionDenied
+from catalog.services import ProductService
+
 
 class ContactsView(View):
     model = Contact
@@ -32,8 +33,15 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         product.save()
         return super().form_valid(form)
 
+
 class ProductListView(ListView):
     model = Product
+
+    def get_queryset(self, **kwargs):
+        ProductService.get_products_from_cache()
+        category = self.kwargs.get('category')
+        products_list = ProductService.get_products_by_category()
+        return products_list
 
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
@@ -51,7 +59,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         user = self.request.user
         if self.object.owner == user:
             return ProductForm
-        if user.has_perms(['products.can_unpublish_product']):
+        if user.has_perms(["products.can_unpublish_product"]):
             return ProductModerForm
         raise PermissionDenied
 
@@ -64,6 +72,6 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         user = self.request.user
         if self.object.owner == user:
             return ProductForm
-        if user.has_perms(['products.can_delete_product']):
+        if user.has_perms(["products.can_delete_product"]):
             return ProductModerForm
         raise PermissionDenied

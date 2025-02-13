@@ -74,7 +74,10 @@ class ProductForm(ProductFormMixin, ModelForm):
 
         return photo
 
+
 class ProductModerForm(ProductFormMixin, ModelForm):
     class Meta:
         model = Product
-        fields = ['is_published',]
+        fields = [
+            "is_published",
+        ]
