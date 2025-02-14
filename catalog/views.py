@@ -70,12 +70,13 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         raise PermissionDenied
 
 
-class CategoryDetailView(LoginRequiredMixin, ListView):
+class CategoryDetailView(LoginRequiredMixin, DetailView):
     model = Category
-    template_name = "catalog/products_list_by_category.html"
+    template_name = "catalog/category_detail.html"
+    context_object_name = 'category'
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         pk = self.object.pk
-        context["products"] = get_products_by_category(pk)
+        context['products'] = get_products_by_category(pk)
         return context

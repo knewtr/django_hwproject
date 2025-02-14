@@ -26,6 +26,6 @@ urlpatterns = [
     path(
         "category/<int:pk>/",
         CategoryDetailView.as_view(),
-        name="products_list_by_category",
+        name="category_detail",
     ),
 ]
