@@ -17,6 +17,7 @@
                   {% if perms.product.can_unpublish_product and perms.product.can_delete_product %}
                   <a class="btn btn-outline-primary" href="{% url 'catalog:product_update' product.pk %}" role="button">Редактировать</a>
                   {% endif %}
+                  <a class="btn btn-outline-primary" href="{% url 'catalog:products_list_by_category' object.category.pk %}" role="button">Посмотреть все продукты этой категории</a>
                   <a class="btn btn-outline-primary" href="{% url 'catalog:product_list' %}" role="button">Назад</a>
                 </div>
               </div>

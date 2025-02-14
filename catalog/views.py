@@ -1,14 +1,13 @@
-
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.exceptions import PermissionDenied
-from django.shortcuts import render
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView, View)
 
 from catalog.forms import ProductForm, ProductModerForm
-from catalog.models import Contact, Product
-from catalog.services import ProductService
+from catalog.models import Category, Contact, Product
+from catalog.services import get_products_by_category
 
 
 class ContactsView(View):
@@ -36,12 +35,6 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
 
 class ProductListView(ListView):
     model = Product
-
-    def get_queryset(self, **kwargs):
-        ProductService.get_products_from_cache()
-        category = self.kwargs.get('category')
-        products_list = ProductService.get_products_by_category()
-        return products_list
 
 
 class ProductDetailView(LoginRequiredMixin, DetailView):
@@ -75,3 +68,14 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         if user.has_perms(["products.can_delete_product"]):
             return ProductModerForm
         raise PermissionDenied
+
+
+class CategoryDetailView(LoginRequiredMixin, ListView):
+    model = Category
+    template_name = "catalog/products_list_by_category.html"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.object.pk
+        context["products"] = get_products_by_category(pk)
+        return context
