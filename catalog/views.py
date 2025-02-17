@@ -1,14 +1,14 @@
-from itertools import product
-
-from django.shortcuts import render
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.exceptions import PermissionDenied
+from django.shortcuts import get_object_or_404, render
 from django.urls import reverse_lazy
 from django.views.generic import (CreateView, DeleteView, DetailView, ListView,
                                   UpdateView, View)
 
-from django.contrib.auth.mixins import LoginRequiredMixin
 from catalog.forms import ProductForm, ProductModerForm
-from catalog.models import Contact, Product
-from django.core.exceptions import PermissionDenied
+from catalog.models import Category, Contact, Product
+from catalog.services import get_products_by_category
+
 
 class ContactsView(View):
     model = Contact
@@ -32,6 +32,7 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
         product.save()
         return super().form_valid(form)
 
+
 class ProductListView(ListView):
     model = Product
 
@@ -51,7 +52,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         user = self.request.user
         if self.object.owner == user:
             return ProductForm
-        if user.has_perms(['products.can_unpublish_product']):
+        if user.has_perms(["products.can_unpublish_product"]):
             return ProductModerForm
         raise PermissionDenied
 
@@ -64,6 +65,18 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         user = self.request.user
         if self.object.owner == user:
             return ProductForm
-        if user.has_perms(['products.can_delete_product']):
+        if user.has_perms(["products.can_delete_product"]):
             return ProductModerForm
         raise PermissionDenied
+
+
+class CategoryDetailView(LoginRequiredMixin, DetailView):
+    model = Category
+    template_name = "catalog/category_detail.html"
+    context_object_name = "category"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        pk = self.object.pk
+        context["products"] = get_products_by_category(pk)
+        return context
